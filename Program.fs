@@ -11,13 +11,38 @@ Directory.CreateDirectory(ticketFolder) |> ignore
 let seatingCharts =
     [| "Movie1", Array2D.init 5 5 (fun _ _   -> "Available")
        "Movie2", Array2D.init 5 5 (fun _ _   -> "Available") |]
+       
+// Load existing seat data from files if available
+let loadSeatingChart (movieName:string) =
+    let filePath = Path.Combine(ticketFolder, movieName + ".txt")
+    if File.Exists(filePath) then
+        let lines = File.ReadAllLines(filePath)
+        let chart = Array2D.init 5 5 (fun   -> "Available")
+        lines |> Array.iter (fun line ->
+            let parts = line.Split(',')
+            let row, col = int parts.[0], int parts.[1]
+            chart.[row, col] <- "Reserved"
+        )
+        chart
+    else
+        Array2D.init 5 5 (fun   -> "Available")
 
+//Saving Reserved Seats to a File
+let saveSeatingChart (movieName: string) (chart: string[,]) =
+    let filePath = Path.Combine(ticketFolder, movieName + ".txt")
+    let reservedSeats =
+        [| for row in 0 .. 4 do
+               for col in 0 .. 4 do
+                   if chart.[row, col] = "Reserved" then
+                       yield sprintf "%d,%d" row col |]
+
+    File.WriteAllLines(filePath, reservedSeats)
     
 //Marking the Seat as Reserved to prevent Double-Booking of the same seat
 let reserveSeat (movieName: string) (chart: string[,]) (row: int) (col: int) (customerName: string) (movieShowtime: string) : Option<string> =
     if chart.[row, col] = "Available" then
         chart.[row, col] <- "Reserved"
-        //TO-DO: Save reserved seats row,column indicies to a file
+        saveSeatingChart movieName chart
         //Generating Ticket ID
         let ticketID = movieName+"-"+ row.ToString()+"/"+ col.ToString()+"-"+ customerName  
         //Generating a Unique Ticket Details and Saving it to a file
