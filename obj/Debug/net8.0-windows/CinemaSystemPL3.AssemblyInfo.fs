@@ -10,7 +10,7 @@ open System.Reflection
 [<assembly: System.Reflection.AssemblyCompanyAttribute("CinemaSystemPL3")>]
 [<assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")>]
 [<assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")>]
-[<assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")>]
+[<assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+52d04267930ffdf5d411a490f0b9433f67ced176")>]
 [<assembly: System.Reflection.AssemblyProductAttribute("CinemaSystemPL3")>]
 [<assembly: System.Reflection.AssemblyTitleAttribute("CinemaSystemPL3")>]
 [<assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")>]
