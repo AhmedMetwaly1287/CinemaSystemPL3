@@ -85,7 +85,7 @@ and createMovieForm (movieName:string) (customerName:string) (movieShowtime: str
                            match ticketID with
                            | Some id ->
                                form.Hide()
-                               //TO-DO: Save Ticket Details and Display it in another form
+                               createDetailsForm customerName movieName (row, col) id movieShowtime
                            | None -> MessageBox.Show("Unable to reserve seat.") |> ignore
                        else
                            MessageBox.Show("This seat is already reserved.") |> ignore)
@@ -98,6 +98,19 @@ and createMovieForm (movieName:string) (customerName:string) (movieShowtime: str
     form.Controls.Add(infoLabel)
     form.Show()
 
+// Details Form
+and createDetailsForm (customerName:string) (movieName:string) (row, col) (ticketID:string) (movieShowtime:string) =
+    let form = new Form(Text = "Booking Details", Size = Size(300, 300))
+    let detailsLabel = new Label(Text = sprintf "Customer: %s\nMovie: %s\nShow Time: %s\nSeat: Row %d, Col %d\nTicket ID: %s" customerName movieName movieShowtime (row + 1) (col + 1) ticketID, Dock = DockStyle.Fill)
+    let exitButton = new Button(Text = "Exit", Dock = DockStyle.Bottom, Width=145)
+
+    exitButton.Click.Add(fun _ -> form.Close(); Application.Exit();)
+
+    form.Controls.Add(detailsLabel)
+    form.Controls.Add(exitButton)
+    form.Show()
+
+    
 // Main Form (Prompts the User to Enter Their Name)
 let createEntryForm () =
     let form = new Form(Text = "Enter Your Name", Size = Size(500, 300))
