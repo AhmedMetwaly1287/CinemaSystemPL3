@@ -52,43 +52,20 @@ let reserveSeat (movieName: string) (chart: string[,]) (row: int) (col: int) (cu
     else
         None
 
- // Main Form the Prompts the User to Select the movie they want to book.      
-let rec createMainForm (customerName:string) =
-    let form = new Form(Text = "Cinema Seat Booking System", Size = Size(400, 400))
+// Details Form
+let createDetailsForm (customerName:string) (movieName:string) (row, col) (ticketID:string) (movieShowtime:string) =
+    let form = new Form(Text = "Booking Details", Size = Size(300, 300))
+    let detailsLabel = new Label(Text = sprintf "Customer: %s\nMovie: %s\nShow Time: %s\nSeat: Row %d, Col %d\nTicket ID: %s" customerName movieName movieShowtime (row + 1) (col + 1) ticketID, Dock = DockStyle.Fill)
+    let exitButton = new Button(Text = "Exit", Dock = DockStyle.Bottom, Width=145)
 
-    let movieShowtimes = [| "Movie1", "8:00 PM -  Monday"; "Movie2", "10:00 PM - Sunday" |]
-    let firstMovieShowtime = snd movieShowtimes.[0]
-    let secondMovieShowtime = snd movieShowtimes.[1]
+    exitButton.Click.Add(fun _ -> form.Close(); Application.Exit();)
 
-    let customerNameLabel = new Label(
-        Text = sprintf "Hello %s, What Movie would you like to book today?" customerName,
-        Dock = DockStyle.Top, 
-        TextAlign = ContentAlignment.MiddleCenter,  
-        Height = 75  
-    )
-
-    let movie1Button = new Button(
-        Text = sprintf "Movie 1\n Movie Showtime: %s" firstMovieShowtime, 
-        Dock = DockStyle.Fill, 
-        Height = 40, 
-        Width = 100
-    )
-
-    let movie2Button = new Button(
-        Text = sprintf "Movie 2\n Movie Showtime: %s" secondMovieShowtime, 
-        Dock = DockStyle.Bottom, 
-        Height = 150
-    )
-
-    movie1Button.Click.Add(fun _ -> form.Hide(); createMovieForm "Movie1" customerName firstMovieShowtime)
-    movie2Button.Click.Add(fun _ -> form.Hide(); createMovieForm "Movie2" customerName secondMovieShowtime)
-    form.Controls.Add(customerNameLabel)
-    form.Controls.Add(movie2Button)
-    form.Controls.Add(movie1Button)
+    form.Controls.Add(detailsLabel)
+    form.Controls.Add(exitButton)
     form.Show()
 
 // Movie Form
-and createMovieForm (movieName:string) (customerName:string) (movieShowtime: string) =
+let createMovieForm (movieName:string) (customerName:string) (movieShowtime: string) =
     let form = new Form(Text = sprintf "%s - Seat Selection" movieName, Size = Size(550, 350))
     let chart =
         match seatingCharts |> Array.tryFind (fun (name, _) -> name = movieName) with
@@ -123,18 +100,41 @@ and createMovieForm (movieName:string) (customerName:string) (movieShowtime: str
     form.Controls.Add(infoLabel)
     form.Show()
 
-// Details Form
-and createDetailsForm (customerName:string) (movieName:string) (row, col) (ticketID:string) (movieShowtime:string) =
-    let form = new Form(Text = "Booking Details", Size = Size(300, 300))
-    let detailsLabel = new Label(Text = sprintf "Customer: %s\nMovie: %s\nShow Time: %s\nSeat: Row %d, Col %d\nTicket ID: %s" customerName movieName movieShowtime (row + 1) (col + 1) ticketID, Dock = DockStyle.Fill)
-    let exitButton = new Button(Text = "Exit", Dock = DockStyle.Bottom, Width=145)
 
-    exitButton.Click.Add(fun _ -> form.Close(); Application.Exit();)
+ // Main Form the Prompts the User to Select the movie they want to book.      
+let createMainForm (customerName:string) =
+    let form = new Form(Text = "Cinema Seat Booking System", Size = Size(400, 400))
 
-    form.Controls.Add(detailsLabel)
-    form.Controls.Add(exitButton)
+    let movieShowtimes = [| "Movie1", "8:00 PM -  Monday"; "Movie2", "10:00 PM - Sunday" |]
+    let firstMovieShowtime = snd movieShowtimes.[0]
+    let secondMovieShowtime = snd movieShowtimes.[1]
+
+    let customerNameLabel = new Label(
+        Text = sprintf "Hello %s, What Movie would you like to book today?" customerName,
+        Dock = DockStyle.Top, 
+        TextAlign = ContentAlignment.MiddleCenter,  
+        Height = 75  
+    )
+
+    let movie1Button = new Button(
+        Text = sprintf "Movie 1\n Movie Showtime: %s" firstMovieShowtime, 
+        Dock = DockStyle.Fill, 
+        Height = 40, 
+        Width = 100
+    )
+
+    let movie2Button = new Button(
+        Text = sprintf "Movie 2\n Movie Showtime: %s" secondMovieShowtime, 
+        Dock = DockStyle.Bottom, 
+        Height = 150
+    )
+
+    movie1Button.Click.Add(fun _ -> form.Hide(); createMovieForm "Movie1" customerName firstMovieShowtime)
+    movie2Button.Click.Add(fun _ -> form.Hide(); createMovieForm "Movie2" customerName secondMovieShowtime)
+    form.Controls.Add(customerNameLabel)
+    form.Controls.Add(movie2Button)
+    form.Controls.Add(movie1Button)
     form.Show()
-
     
 // Main Form (Prompts the User to Enter Their Name)
 let createEntryForm () =
