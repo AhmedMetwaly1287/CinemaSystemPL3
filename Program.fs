@@ -17,7 +17,7 @@ let loadSeatingChart (movieName:string) =
     let filePath = Path.Combine(ticketFolder, movieName + ".txt")
     if File.Exists(filePath) then
         let lines = File.ReadAllLines(filePath)
-        let chart = Array2D.init 5 5 (fun   -> "Available")
+        let chart = Array2D.init 5 5 (fun _ _ -> "Available")
         lines |> Array.iter (fun line ->
             let parts = line.Split(',')
             let row, col = int parts.[0], int parts.[1]
@@ -25,7 +25,7 @@ let loadSeatingChart (movieName:string) =
         )
         chart
     else
-        Array2D.init 5 5 (fun   -> "Available")
+        Array2D.init 5 5 (fun _ _ -> "Available")
 
 //Saving Reserved Seats to a File
 let saveSeatingChart (movieName: string) (chart: string[,]) =
@@ -157,3 +157,10 @@ let createEntryForm () =
     form.Controls.Add(nameLabel)
 
     form
+
+[<STAThread>]
+do
+    seatingCharts |> Array.iter (fun (name, chart) ->
+        let loadedChart = loadSeatingChart name
+        Array2D.blit loadedChart 0 0 chart 0 0 5 5)
+    Application.Run(createEntryForm())
